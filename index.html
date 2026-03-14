@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- SEO -->
+<title>Zenon Portal v1.5 — A Trust-Reduced Bitcoin Interoperability Protocol</title>
+<meta name="description" content="Zenon Portal v1.5 is a trust-reduced interoperability protocol that separates Bitcoin custody from Zenon execution. It uses Taproot escrow scripts, SPV verification, and FROST threshold signatures to bridge BTC and Zenon without federated multisig custody.">
+<meta name="keywords" content="Zenon, Bitcoin, interoperability, bridge, BTC, eBTC, Taproot, FROST, threshold signatures, SPV, escrow, UTXO, cross-chain, Layer 1, decentralized, trust-reduced, Schnorr, cryptographic proof, Zenon Network, Portal">
+<meta name="author" content="Zenon Network">
+<link rel="canonical" href="https://0x3639.github.io/zenon-portal/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zenon Portal v1.5 — Bitcoin Interoperability Blueprint">
+<meta property="og:description" content="A trust-reduced protocol separating Bitcoin custody from Zenon execution. Uses Taproot escrow, SPV proofs, and FROST threshold signatures for secure BTC-to-Zenon bridging.">
+<meta property="og:url" content="https://0x3639.github.io/zenon-portal/">
+<meta property="og:image" content="https://0x3639.github.io/zenon-portal/pages/page-01.png">
+<meta property="og:image:width" content="2400">
+<meta property="og:image:height" content="1350">
+<meta property="og:site_name" content="Zenon Portal Blueprint">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Zenon Portal v1.5 — Bitcoin Interoperability Blueprint">
+<meta name="twitter:description" content="A trust-reduced protocol separating Bitcoin custody from Zenon execution using Taproot escrow, SPV proofs, and FROST threshold signatures.">
+<meta name="twitter:image" content="https://0x3639.github.io/zenon-portal/pages/page-01.png">
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Zenon Portal v1.5 — A Trust-Reduced Bitcoin Interoperability Protocol",
+  "description": "Technical blueprint describing how Zenon Portal v1.5 separates Bitcoin custody from Zenon execution using Taproot escrow scripts, SPV Merkle inclusion proofs, and FROST (Flexible Round-Optimized Schnorr Threshold) signatures. Covers Class R (Refund-Protected) and Class P (Pool-Liquidity) escrow models, the cross-layer withdrawal protocol, attributable slashing for economic security, unilateral refund paths, and eBTC fungibility considerations.",
+  "author": {
+    "@type": "Organization",
+    "name": "Zenon Network"
+  },
+  "about": [
+    {"@type": "Thing", "name": "Bitcoin interoperability"},
+    {"@type": "Thing", "name": "Cross-chain bridge"},
+    {"@type": "Thing", "name": "Taproot escrow"},
+    {"@type": "Thing", "name": "FROST threshold signatures"},
+    {"@type": "Thing", "name": "SPV verification"},
+    {"@type": "Thing", "name": "Trust-reduced bridging"}
+  ],
+  "mainEntityOfPage": "https://0x3639.github.io/zenon-portal/",
+  "image": "https://0x3639.github.io/zenon-portal/pages/page-01.png"
+}
+</script>
+
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  background: #111110;
+  min-height: 100vh;
+}
+
+main {
+  width: 100%;
+}
+
+/* Each page is a full-viewport slide */
+.slide {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: start;
+  padding: 24px;
+}
+
+.slide img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Page counter */
+.page-counter {
+  position: fixed;
+  bottom: 24px;
+  right: 28px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+  z-index: 10;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+  transition: opacity 0.3s;
+}
+
+/* Nav dots */
+.nav-dots {
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 10;
+}
+
+.nav-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  padding: 0;
+}
+
+.nav-dot:hover {
+  background: rgba(255, 255, 255, 0.5);
+  transform: scale(1.4);
+}
+
+.nav-dot.active {
+  background: rgba(255, 255, 255, 0.85);
+  transform: scale(1.3);
+}
+
+/* Scroll hint on first page */
+.scroll-hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  z-index: 10;
+  transition: opacity 0.5s;
+}
+
+.scroll-hint svg {
+  animation: bounce 2s ease infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+/* Visually hidden but readable by search engines and screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 640px) {
+  .slide { padding: 12px; }
+  .nav-dots { display: none; }
+  .page-counter { bottom: 12px; right: 16px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Hidden SEO content for crawlers and screen readers -->
+<h1 class="sr-only">Zenon Portal v1.5 — A Trust-Reduced Bitcoin Interoperability Protocol</h1>
+<div class="sr-only">
+  <h2>Overview</h2>
+  <p>Zenon Portal v1.5 is a trust-reduced interoperability protocol that separates Bitcoin custody from Zenon execution. Funds never leave the Bitcoin base layer. Instead of transferring assets to a federated multisig, Zenon Portal extends execution capability to Zenon by giving it verifiable, cryptographic knowledge of Bitcoin's state through SPV (Simplified Payment Verification) Merkle inclusion proofs.</p>
+
+  <h2>The Lifecycle of an Escrowed Bitcoin</h2>
+  <p>1. Deposit: User locks BTC into a Taproot escrow script. 2. Verify: Relayer submits an SPV Merkle inclusion proof. 3. Mint: Zenon credits eBTC to the depositor. 4. Withdraw: User burns eBTC and a FROST threshold signature unlocks the BTC. eBTC is not a wrapped token — it is a Zenon-native accounting receipt representing a verified claim on a base-layer Bitcoin UTXO.</p>
+
+  <h2>Two Distinct Escrow Classes</h2>
+  <p>Class R (Refund-Protected): Strict user safety. Relayers cannot move or consolidate funds without the user's live cryptographic signature. Key-path spending is mathematically disabled via a NUMS point. Withdrawal requires both the user signature (pk_u) and the relayer threshold (pk_frost_epoch). A unilateral refund leaf allows the user to reclaim funds after ABSOLUTE_EXPIRY using only their own key.</p>
+  <p>Class P (Pool-Liquidity): Execution efficiency. The FROST Epoch Key is placed at the Taproot internal key, granting relayers unilateral authority to spend the UTXO. This enables seamless, non-interactive withdrawals and UTXO consolidation. The trade-off is exposure to relayer collusion and combined censorship attacks. A time-limited unilateral refund leaf provides a fallback exit.</p>
+
+  <h2>Trade-Off Matrix: Class R vs Class P</h2>
+  <p>Withdrawal UX: Class R requires the user to be online (interactive), Class P is relayer-managed (non-interactive). Relayer Theft Risk: Impossible for Class R (requires user signature), Vulnerable for Class P (requires threshold collusion). Consolidation Risk: Impossible for Class R, Allowed for Class P during the Safety Window. A9 Attack Vulnerability: Class R is structurally immune, Class P has acknowledged risk. Unilateral Exit Guarantee: Permanent for Class R (if unspent), Time-limited for Class P.</p>
+
+  <h2>The SPV Verifier</h2>
+  <p>Deposit verification is cryptographic, not social. Zenon maintains a continuous chain of Bitcoin block headers. The verifier relies on a hardcoded, governance-approved GENESIS_CHECKPOINT. All SPV proofs must anchor to a chain descending from this root. Deposits must be valid P2TR (Pay-to-Taproot) transactions and are checked for CVE-2012-2459 resistance.</p>
+
+  <h2>The Relayer System and FROST Coordination</h2>
+  <p>Relayers provide liveness and, for Class P, pooled custody. They coordinate using FROST (Flexible Round-Optimized Schnorr Threshold Signatures). Unlike MuSig2 which requires n-of-n participation, FROST is a t-of-n scheme. Any subset of t relayers can produce a single aggregate Schnorr signature that satisfies the Bitcoin Taproot key-path, leaving no on-chain evidence of which specific relayers signed.</p>
+
+  <h2>UTXO Consolidation and the Safety Window</h2>
+  <p>To prevent UTXO fragmentation, relayers can consolidate Class P UTXOs. However, they may only do so once the safety window opens (after 2016 blocks). Once consolidated, the original Bitcoin UTXO ceases to exist, permanently eliminating the depositor's Bitcoin-native exit path.</p>
+
+  <h2>The Cross-Layer Withdrawal Protocol</h2>
+  <p>Step 1: User burns eBTC on Zenon, protocol locks max fee in reserve. Step 2: Relayer claims withdrawal and reserves a specific UTXO. Step 3: FROST threshold generates and broadcasts the Bitcoin transaction. Step 4: Relayer submits a WithdrawalCompletionProof (SPV) back to Zenon. Step 5: UTXO is marked spent, fee credited to relayer, remainder refunded.</p>
+
+  <h2>Economic Security: Attributable Slashing</h2>
+  <p>Relayers lock capital bonds on Zenon. They must cryptographically commit to a SpendIntent on Zenon before signing on Bitcoin. On the honest path, they post a valid SigningBundle. On the malicious path, a Watcher submits a SlashProof, resulting in attributable bond forfeiture and Watcher rewards. Caveat: a highly coordinated threshold could compute the FROST key off-protocol and bypass attribution entirely. Class P is trust-reduced, not trustless.</p>
+
+  <h2>The Unilateral Refund Path</h2>
+  <p>If relayers censor transactions or the Zenon network suffers an outage, the depositor is not stranded. Once the absolute timelock expires, the user broadcasts a raw Bitcoin transaction directly to the base layer, reclaiming their original UTXO. Requirement: the UTXO must remain unspent and the user must still possess their original pk_u key.</p>
+
+  <h2>eBTC Fungibility and Secondary Holder Risks</h2>
+  <p>eBTC is fully fungible at the protocol accounting level. However, collateral quality varies — Class R UTXOs are shielded while Class P UTXOs are liquid. Secondary risk: if a user buys eBTC on the open market, they do not own the underlying pk_u of the backing UTXO. Secondary holders possess no Bitcoin-native refund path. Their exit relies entirely on Zenon network liveness and pool collateralization.</p>
+
+  <h2>Synthesis: The Trust-Reduced Bridge</h2>
+  <p>Zenon Portal v1.5 sits between federated multisig bridges (high trust, opaque) and a fully trustless two-way peg (currently impossible on Bitcoin base layer). It does not claim to be trustless — because a trustless Bitcoin bridge does not exist. It is a highly engineered, trust-reduced schematic that forces execution risk into the open, allows users to choose their own exit guarantees, and verifies truth through cryptography rather than social attestation.</p>
+</div>
+
+<!-- Nav dots -->
+<nav class="nav-dots" id="navDots" aria-label="Page navigation"></nav>
+
+<!-- Page counter -->
+<div class="page-counter" id="pageCounter">1 / 15</div>
+
+<!-- Scroll hint -->
+<div class="scroll-hint" id="scrollHint">
+  Scroll
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</div>
+
+<main role="main">
+  <div class="slide"><img src="pages/page-01.png" alt="Zenon Portal v1.5 title page — A Trust-Reduced Interoperability Protocol Separating Bitcoin Custody from Zenon Execution, showing UTXO to eBTC air-gap diagram" width="2400" height="1350" loading="eager"></div>
+  <div class="slide"><img src="pages/page-02.png" alt="Custody belongs on Bitcoin, Execution belongs on Zenon — The Settlement Layer with Taproot UTXOs connected to the Execution Layer via Cryptographic SPV Proofs" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-03.png" alt="The Lifecycle of an Escrowed Bitcoin — four steps: Deposit BTC into Taproot escrow, Verify via SPV Merkle proof, Mint eBTC on Zenon, Withdraw by burning eBTC with FROST threshold unlock" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-04.png" alt="The Core Paradigm: Two Distinct Escrow Classes — Class R (Refund-Protected) for strict user safety vs Class P (Pool-Liquidity) for execution efficiency with delegated key-path authority" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-05.png" alt="Class R: Cryptographically Bound to User Consent — Taproot script tree showing NUMS_point disabled key-path, cooperative withdrawal leaf requiring both user and relayer signatures, and unilateral refund leaf with ABSOLUTE_EXPIRY timelock" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-06.png" alt="Class P: Delegated Authority for Pooled Efficiency — FROST Epoch Key at Taproot internal key enabling relayer threshold spending, with time-limited unilateral refund leaf" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-07.png" alt="The Trade-Off Matrix comparing Class R and Class P across withdrawal UX, relayer theft risk, consolidation risk, A9 attack vulnerability, and unilateral exit guarantee" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-08.png" alt="Establishing Truth: The SPV Verifier — Zenon maintains a continuous chain of Bitcoin block headers anchored to a hardcoded GENESIS_CHECKPOINT, validating P2TR deposits via Merkle inclusion proofs" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-09.png" alt="The Relayer System and FROST Coordination — relayers use Flexible Round-Optimized Schnorr Threshold Signatures (t-of-n scheme) producing a single aggregate Schnorr signature with no on-chain trace of which relayers signed" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-10.png" alt="UTXO Consolidation and The Safety Window — Safe Period with user refund rights, followed by a 2016-block Consolidation Safety Window after which relayers may merge Class P UTXOs" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-11.png" alt="The Cross-Layer Withdrawal Protocol — five-step flow across Zenon and Bitcoin layers: burn eBTC, claim withdrawal, FROST threshold broadcasts Bitcoin tx, submit WithdrawalCompletionProof SPV, UTXO marked spent" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-12.png" alt="Economic Security: Attributable Slashing — The Accountability Loop where relayers lock bonds, commit SpendIntents, and face bond forfeiture via Watcher-submitted SlashProofs on the malicious path" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-13.png" alt="The Ultimate Exit: The Unilateral Refund Path — after ABSOLUTE_EXPIRY timelock, user broadcasts raw Bitcoin transaction to reclaim original UTXO directly on the base layer" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-14.png" alt="eBTC Fungibility and Secondary Holder Risks — eBTC is fully fungible at protocol level but collateral quality varies between shielded Class R UTXOs and liquid Class P UTXOs, with secondary holders having no Bitcoin-native refund path" width="2400" height="1350" loading="lazy"></div>
+  <div class="slide"><img src="pages/page-15.png" alt="Synthesis: The Trust-Reduced Bridge — Zenon Portal v1.5 positioned on the interoperability landscape between Federated Multisig (high trust) and Fully Trustless 2-Way Peg (currently impossible on Bitcoin)" width="2400" height="1350" loading="lazy"></div>
+</main>
+
+<script>
+(function () {
+  var slides = document.querySelectorAll('.slide');
+  var dots = document.getElementById('navDots');
+  var counter = document.getElementById('pageCounter');
+  var hint = document.getElementById('scrollHint');
+  var total = slides.length;
+
+  // Build nav dots
+  for (var i = 0; i < total; i++) {
+    var btn = document.createElement('button');
+    btn.className = 'nav-dot';
+    btn.setAttribute('aria-label', 'Go to page ' + (i + 1));
+    btn.dataset.index = i;
+    btn.addEventListener('click', function () {
+      slides[this.dataset.index].scrollIntoView({ behavior: 'smooth' });
+    });
+    dots.appendChild(btn);
+  }
+
+  var dotEls = dots.querySelectorAll('.nav-dot');
+  var current = 0;
+
+  // Intersection observer to track active slide
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        var idx = Array.prototype.indexOf.call(slides, entry.target);
+        current = idx;
+        counter.textContent = (idx + 1) + ' / ' + total;
+        dotEls.forEach(function (d, i) {
+          d.classList.toggle('active', i === idx);
+        });
+        // Hide scroll hint after first page
+        hint.style.opacity = idx === 0 ? '1' : '0';
+      }
+    });
+  }, { threshold: 0.5 });
+
+  slides.forEach(function (s) { observer.observe(s); });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+      if (e.key === ' ') e.preventDefault();
+      var next = Math.min(current + 1, total - 1);
+      slides[next].scrollIntoView({ behavior: 'smooth' });
+    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+      var prev = Math.max(current - 1, 0);
+      slides[prev].scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
