@@ -1,5 +1,7 @@
 # Zenon Portal v1.5 — Bitcoin Interoperability Blueprint
 
+[![Zenon Portal v1.5 — Bitcoin Interoperability Blueprint](assets/images/bitcoin-zenon-interop.png)](https://ebtc.wtf)
+
 **Live site: [ebtc.wtf](https://ebtc.wtf)**
 
 ## What is this?
